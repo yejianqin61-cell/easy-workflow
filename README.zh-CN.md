@@ -1,6 +1,6 @@
-# easy-output
+# easy-workflow
 
-一套让 Agent 写出的文档**几分钟内可读、同时密到能直接开工**的 agent skill。一条法条，五个文档形态，两个渲染器。
+一套让 Agent 写出的文档**几分钟内可读、同时密到能直接开工**的 agent skill。一条法条，五个文档形态加一个执行器，两个渲染器。
 
 法条是 [Karpathy 那句话](https://x.com/karpathy/status/2105819303471976479)的压缩：我们往后花在读模型产出上的
 时间，会多于写给模型的时间。一份文档只有在短到能读完、清楚到能照着做的时候，才配得上这段时间。十二条，每条
@@ -13,16 +13,16 @@
 ## 安装
 
 ```bash
-npx skills add yejianqin61-cell/easy-output -g
+npx skills add yejianqin61-cell/easy-workflow -g
 ```
 
 这就是 [Vercel Labs 的 `skills` CLI](https://github.com/vercel-labs/skills)。它解析仓库，找出 `skills/` 下的
 每一个 `SKILL.md`。然后装到它检测到的所有 agent：Claude Code、Codex、Cursor、OpenCode 等约 75 种。
 
 ```bash
-npx skills add yejianqin61-cell/easy-output --list                 # 先预览
-npx skills add yejianqin61-cell/easy-output -g -a claude-code -y   # 只装一个 agent
-npx skills use yejianqin61-cell/easy-output --skill easy-audit --agent claude-code
+npx skills add yejianqin61-cell/easy-workflow --list                 # 先预览
+npx skills add yejianqin61-cell/easy-workflow -g -a claude-code -y   # 只装一个 agent
+npx skills use yejianqin61-cell/easy-workflow --skill easy-audit --agent claude-code
 ```
 
 `-g` 装到全局，也就是所有项目。去掉则装进当前项目的 `./.claude/skills/`。安装走软链接，clone 里 `git pull`
@@ -37,7 +37,8 @@ npx skills use yejianqin61-cell/easy-output --skill easy-audit --agent claude-co
 | [easy-audit](skills/documents/easy-audit/SKILL.md) | 完成度、缺陷、一缺陷一计划 |
 | [easy-summary](skills/documents/easy-summary/SKILL.md) | 变的是什么、意味着什么、还开着什么 |
 | [easy-plan](skills/documents/easy-plan/SKILL.md) | 需求排成 phase，每个结束在能演示的地方 |
-| [easy-task-act](skills/documents/easy-task-act/SKILL.md) | 一条任务一份简报，一条任务一次提交 |
+| [easy-task](skills/documents/easy-task/SKILL.md) | 一条任务一份简报，交接合同；写代码前先停 |
+| [easy-implement](skills/documents/easy-implement/SKILL.md) | 照简报逐条实现，一条任务一次提交 |
 | [easy-registry](skills/documents/easy-registry/SKILL.md) | 一条事项一行，反复修改中保持当前 |
 | [easy-diagram](skills/render/easy-diagram/SKILL.md) | 一句判断一张图：ASCII、Mermaid 或 SVG |
 | [easy-report](skills/render/easy-report/SKILL.md) | 文档渲染成单文件 HTML 页 |
@@ -45,7 +46,7 @@ npx skills use yejianqin61-cell/easy-output --skill easy-audit --agent claude-co
 完整的约定在各自的 `SKILL.md` 里，这张表只是目录。
 
 链路是审计、计划、任务与执行。`easy-audit` 点出缺陷与计划，`easy-plan` 把需求排成 phase，
-`easy-task-act` 写简报并落地。`easy-summary` 收口这一轮，`easy-registry` 存着还没人动手的那些。
+`easy-task` 写简报，`easy-implement` 落地。`easy-summary` 收口这一轮，`easy-registry` 存着还没人动手的那些。
 
 每个会产出文档的形态，都在开写前问一次：要 Markdown 还是单文件 HTML 报告。渲染交给 `easy-report`。
 
@@ -87,7 +88,7 @@ python tools/check.py --report   # 打印指标表
 ## 目录结构
 
 ```
-easy-output/
+easy-workflow/
 ├── RULES.md                      # 可读性法条：十二条与各自阈值
 ├── RULES.zh-CN.md                # 同一份法条的中文对照
 ├── CLAUDE.md                     # 本仓的 skill 写作约定
@@ -98,14 +99,15 @@ easy-output/
     │   ├── easy-audit/           SKILL.md + SKILL.zh-CN.md + agents/ + references/
     │   ├── easy-summary/         SKILL.md + SKILL.zh-CN.md + agents/ + references/
     │   ├── easy-plan/            SKILL.md + SKILL.zh-CN.md + agents/ + references/
-    │   ├── easy-task-act/        SKILL.md + SKILL.zh-CN.md + agents/ + references/
+    │   ├── easy-task/            SKILL.md + SKILL.zh-CN.md + agents/ + references/
+    │   ├── easy-implement/       SKILL.md + SKILL.zh-CN.md + agents/ + references/
     │   └── easy-registry/        SKILL.md + SKILL.zh-CN.md + agents/ + references/
     └── render/                   # 把文档变成另一种介质
         ├── easy-diagram/         SKILL.md + SKILL.zh-CN.md + agents/ + references/
         └── easy-report/          SKILL.md + SKILL.zh-CN.md + agents/ + references/
 ```
 
-五个文档 skill 各自在 `references/readability-law.md` 自带一份法条，因为 skill 是各自独立安装的。两个渲染
+每个文档 skill 各自在 `references/readability-law.md` 自带一份法条，因为 skill 是各自独立安装的。两个渲染
 skill 不带：它们渲染的文档本来就已经守了法条。`easy-report` 拥有 `references/report-template.html`、
 填写规范和渲染闸门；`easy-diagram` 拥有载体规则。
 

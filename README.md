@@ -1,7 +1,7 @@
-# easy-output
+# easy-workflow
 
 Agent skills that make the documents an agent writes readable in minutes, and dense enough to build
-from. One law, five document shapes, two renderers.
+from. One law, five document shapes and an executor, two renderers.
 
 The law compresses [Karpathy's point](https://x.com/karpathy/status/2105819303471976479): we will spend
 more time reading what a model produced than writing prompts for it. A document earns that time when it
@@ -15,7 +15,7 @@ Follows the [Agent Skills](https://agentskills.io/) format. Markdown only, with 
 ## Install
 
 ```bash
-npx skills add yejianqin61-cell/easy-output -g
+npx skills add yejianqin61-cell/easy-workflow -g
 ```
 
 That is [Vercel Labs' `skills` CLI](https://github.com/vercel-labs/skills). It finds every `SKILL.md`
@@ -23,9 +23,9 @@ under `skills/`. Then it installs into every agent it detects: Claude Code, Code
 about 75 more.
 
 ```bash
-npx skills add yejianqin61-cell/easy-output --list                 # preview first
-npx skills add yejianqin61-cell/easy-output -g -a claude-code -y   # one agent
-npx skills use yejianqin61-cell/easy-output --skill easy-audit --agent claude-code
+npx skills add yejianqin61-cell/easy-workflow --list                 # preview first
+npx skills add yejianqin61-cell/easy-workflow -g -a claude-code -y   # one agent
+npx skills use yejianqin61-cell/easy-workflow --skill easy-audit --agent claude-code
 ```
 
 `-g` installs for every project. Drop it to install into `./.claude/skills/` instead. Installs run
@@ -41,7 +41,8 @@ directory.
 | [easy-audit](skills/documents/easy-audit/SKILL.md) | Requirements with percentages, defects, one plan each |
 | [easy-summary](skills/documents/easy-summary/SKILL.md) | What changed, what it means, what is still open |
 | [easy-plan](skills/documents/easy-plan/SKILL.md) | Requirements into phases, each ending somewhere demoable |
-| [easy-task-act](skills/documents/easy-task-act/SKILL.md) | One brief per task, then each task in its own commit |
+| [easy-task](skills/documents/easy-task/SKILL.md) | One brief per task, a handoff contract; stops before coding |
+| [easy-implement](skills/documents/easy-implement/SKILL.md) | Implements the briefs, one at a time, each in its own commit |
 | [easy-registry](skills/documents/easy-registry/SKILL.md) | One row per item, kept current across many edits |
 | [easy-diagram](skills/render/easy-diagram/SKILL.md) | One claim, one figure: ASCII, Mermaid or SVG |
 | [easy-report](skills/render/easy-report/SKILL.md) | The document as a single-file HTML page |
@@ -49,7 +50,7 @@ directory.
 Each `SKILL.md` carries the full contract, so this table stays a directory.
 
 The chain runs audit, plan, task and act. `easy-audit` names the defects and their plans, `easy-plan`
-orders the requirements into phases, and `easy-task-act` writes the briefs and lands them.
+orders the requirements into phases, `easy-task` writes the briefs and `easy-implement` lands them.
 `easy-summary` closes the round. `easy-registry` holds what nobody is working on yet.
 
 Every shape that writes a document asks once, before writing, whether the user wants Markdown or a
@@ -97,7 +98,7 @@ installable. See [`tools/README.md`](tools/README.md).
 ## Structure
 
 ```
-easy-output/
+easy-workflow/
 ├── RULES.md                      # the readability law: twelve clauses and their thresholds
 ├── RULES.zh-CN.md                # the same law, in Chinese
 ├── CLAUDE.md                     # how skills are written here
@@ -108,14 +109,15 @@ easy-output/
     │   ├── easy-audit/           SKILL.md + SKILL.zh-CN.md + agents/ + references/
     │   ├── easy-summary/         SKILL.md + SKILL.zh-CN.md + agents/ + references/
     │   ├── easy-plan/            SKILL.md + SKILL.zh-CN.md + agents/ + references/
-    │   ├── easy-task-act/        SKILL.md + SKILL.zh-CN.md + agents/ + references/
+    │   ├── easy-task/            SKILL.md + SKILL.zh-CN.md + agents/ + references/
+    │   ├── easy-implement/       SKILL.md + SKILL.zh-CN.md + agents/ + references/
     │   └── easy-registry/        SKILL.md + SKILL.zh-CN.md + agents/ + references/
     └── render/                   # a document turned into another medium
         ├── easy-diagram/         SKILL.md + SKILL.zh-CN.md + agents/ + references/
         └── easy-report/          SKILL.md + SKILL.zh-CN.md + agents/ + references/
 ```
 
-Each of the five document skills carries a copy of the law at `references/readability-law.md`, because
+Each document skill carries a copy of the law at `references/readability-law.md`, because
 skills install separately. The two render skills carry none: they render a document that already obeys
 the law. `easy-report` owns `references/report-template.html`, the fill-in contract, and the render
 gate. `easy-diagram` owns the carrier rules.

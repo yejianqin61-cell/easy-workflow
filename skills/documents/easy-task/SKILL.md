@@ -1,21 +1,26 @@
 ---
-name: easy-task-act
+name: easy-task
 description: >-
-  Use when a phase of a plan has to become work that gets done: 子任务, 任务文档, 开工, 执行这个 phase,
-  开始实现, write the task briefs, work through this phase. Writes one short brief per task, then
-  implements them one at a time, each ending in its own commit. Reached from easy-plan, and it closes by
-  calling easy-summary.
+  Use to write the task briefs for one phase of a plan, as a handoff contract for a separate (often
+  cheaper) model to implement. Stops before any code: easy-implement does the coding. Triggers on
+  写task文档, 任务文档, 任务简报, 子任务, 拆任务, 写给低级模型去编码, write task briefs, task doc,
+  handoff brief. Reached from easy-plan; hands off to easy-implement.
 ---
 
-# Easy task and act
+# Easy task
 
-**A task ends in a commit.** That one sentence sizes the task, names its proof, and decides when it is
-finished.
+**A task ends in a commit — but this skill stops before the first line of code.** It writes the brief,
+and the brief is the whole contract handed to whoever implements it. `easy-implement` does the coding,
+and it may run on a cheaper model than the one writing here.
 
-This skill has two halves, and the order between them is the point: **write every brief in the batch
-first, then implement.** The batch is one phase: every task in it, and nothing from the next one. That
-is three to seven briefs, because `easy-plan` caps a phase there. The batch is a gate. An agent that
-starts coding after the first brief has stopped planning and started hoping.
+That split is the point. The strong model holds the context and makes the calls. It writes briefs dense
+enough that a weaker model can execute them without a judgement call of its own. Every decision this
+skill leaves open, the implementer has to invent. And the implementer is the party least equipped to
+make it.
+
+Write the whole batch first, then hand off. The batch is one phase: every task in it, and nothing from
+the next one. `easy-plan` caps a phase at three to seven tasks, so that is three to seven briefs. The
+batch is a gate: no code is written, by anyone, until every brief in the phase exists.
 
 A phase holding more than seven tasks is two phases. Do not write twenty-five briefs: cut the phases
 again, or take one phase and leave the rest of the plan for the next batch.
@@ -27,6 +32,23 @@ hold here.
 
 Ask once: **Markdown, or a single-file HTML report?** For a batch of briefs, Markdown is nearly always
 the answer. For the report, finish the Markdown first, then call the Skill tool with "easy-report".
+
+## Write for the implementer
+
+The reader is not you, and is likely less capable than you. Four rules follow, and they are the reason
+this skill is split from the act:
+
+- **Pin every decision with its location.** "The lock is server-side (ADR 0007)", not "the lock is
+  server-side". A decision with no source gets re-litigated by whoever reads it next.
+- **Give exact commands, not descriptions.** `npm test -- src/auth`, not "run the auth tests". A weaker
+  model should never have to guess the invocation.
+- **Every expected value comes from an independent source**, never from reading the code. A weaker model
+  cannot tell a tautological test from a real one, so the brief must hand it the real one.
+- **Name the stop triggers.** Where the task might snag, say so, and say that the implementer stops and
+  escalates rather than guessing.
+
+A brief that assumes the reader will "figure it out" has handed the hardest part to the least-equipped
+party.
 
 ## Parts 1 to 4: the brief
 
@@ -52,10 +74,11 @@ stale, and a path does not.
 | **Settled** | the decisions this task must not reopen, each with where it lives | ≤4 lines |
 | **Edges and seam** | the seam `easy-plan` named, what it touches, what it leaves alone | ≤3 lines |
 | **Run** | the exact test command and typecheck command for this task | ≤3 lines |
-| **Unknowns** | where it will probably snag, and the trigger to stop and ask | ≤3 lines |
+| **Unknowns** | where it will probably snag, and the trigger to stop and escalate | ≤3 lines |
 
 A path without a question is noise. These are entry points, not an inventory. Give the three to five
-places a person handing this over would name. Then let the agent expand the list by searching from them.
+places a person handing this over would name. Then let the implementer expand the list by searching from
+them.
 
 The seam is the plan's. Restate it here, and add none: a brief that picks its own seam has reopened a
 decision the plan closed.
@@ -63,8 +86,9 @@ decision the plan closed.
 ### 3. The workflow
 
 Numbered steps for this task alone. One action per step, and each step says what it produces. Five to
-eight steps is normal. Step one is always **read part 2 and restate the task in one line**, because that
-restatement is what the reading was for.
+eight steps is normal. Step one is always **read part 2 and restate the task in one line**. That
+restatement is what the reading was for, and the implementer's first chance to catch a brief that is
+wrong.
 
 ### 4. The test cases
 
@@ -77,7 +101,8 @@ A table, and no test code:
 The expected value comes from somewhere independent: a known-good literal, a worked example, the plan. An
 expectation that recomputes what the code does passes by construction, and can never disagree with it.
 
-Five cases is usually enough. The tests themselves are written red-first in part 5, one case at a time.
+Five cases is usually enough. The tests themselves are written red-first by `easy-implement`, one case at
+a time.
 
 <task-brief>
 
@@ -114,7 +139,7 @@ Five cases is usually enough. The tests themselves are written red-first in part
 **Unknowns**
 
 - Whether two failures can interleave and lose a count. If the read and the write cannot be made atomic
-  here, stop and say so.
+  here, stop and escalate.
 
 ## 3. The workflow
 
@@ -135,9 +160,9 @@ Five cases is usually enough. The tests themselves are written red-first in part
 
 </task-brief>
 
-## Part 5: the act
+## Process
 
-Six steps. Each ends on a check you can make.
+Three steps. Each ends on a check you can make.
 
 ### 1. Write the whole batch
 
@@ -146,69 +171,39 @@ tool with "easy-plan" first.
 
 **Done when** every task in the phase has a brief, and every brief fits its budgets.
 
-### 2. Gate
+### 2. Gate on self-sufficiency
 
-Write no code until the batch is complete. This gate is the reason the two halves live in one skill.
+Write no code. Read each brief as if you were a model with no memory of this conversation and no access
+to the strong model that wrote it. A brief passes only if it can be executed from its own four parts. That means
+every decision pinned, every command exact, every expected value independent, every snag given a stop
+trigger.
 
-**Done when** the batch is complete.
+**Done when** the batch is complete and every brief passes that cold read.
 
-### 3. Take the frontier
+### 3. Hand off
 
-Work the tasks whose predecessors are done, one at a time. Any task with nothing left in front of it can
-start, which for a linear phase means top to bottom.
+Deliver the briefs to `easy-implement`, or to the implementer model directly. This skill writes no code
+and lands no commit.
 
-**Done when** one task is chosen, and you can say why it is the next one.
-
-### 4. Red, then green
-
-Inside one task: write one failing test at the seam from part 2, then the least code that passes it.
-Repeat per case. Test only at the seam the brief names, and keep the slices vertical: one test, one
-implementation, then the next case.
-
-**Done when** every case in part 4 is green, and the tests are still read as behaviour rather than
-structure.
-
-### 5. Commit
-
-One commit per intent, in the conventional format. A failing test fixed afterwards earns its own
-commit, because the next reader wants to see what broke.
-
-**Done when** the working tree is clean, and a reader can tell from the log what changed and why.
-
-### 6. Close the batch
-
-Call the Skill tool with "easy-summary" and produce the batch summary: what changed, what it means, and
-what is still open.
-
-**Done when** the summary document exists, and every task in the batch is either committed or named as
-unfinished.
-
-## Commits
-
-`type(scope): what changed`, imperative, lowercase type: `feat(auth): count failed logins and lock at
-the threshold`.
-
-- One commit per intent. A task usually makes one, and a task holding two intents makes two.
-- A fix after a red test is its own commit, `fix(auth): ...`. The test and the fix never share a commit.
-- The commit body carries what the reading changed. That is where findings live, because a brief is not
-  edited once it is written.
+**Done when** the briefs are delivered, and nothing in them waits on a fact only you hold.
 
 ## Stop and ask
 
-Stop, and say so, when any of these holds:
+Stop, and ask the user, before handing off when any of these holds:
 
-- Reading part 2 changes the task.
-- The seam the plan named does not exist, or sits lower than the plan claimed.
-- A case cannot get an expected value from an independent source.
-- The task needs a decision the plan did not make.
+- A task needs a decision the plan did not make.
+- The plan's seam does not exist, or sits lower than the plan claimed. Fixing the brief here is cheaper
+  than discovering it mid-implementation.
+- A test case cannot get an expected value from an independent source.
+- The phase is larger than seven tasks and will not cut cleanly.
 
 ## Anti-patterns
 
-- Starting the code before the batch is written.
+- Writing any code. That is `easy-implement`'s job, and starting it here defeats the split.
 - A brief written as paragraphs of prose. Blocks, and lines.
 - A read-first list with no questions attached. That is an inventory, not a handoff.
+- A decision stated with no location, so the implementer re-opens it.
+- A command described rather than written out.
 - A test whose expected value recomputes what the code does.
-- Tests written for imagined behaviour, before the seam has taught you anything.
-- The red test and its fix sharing a commit.
-- Editing a brief after it is written.
-- Finishing the last task without calling `easy-summary`.
+- A snag named with no instruction to stop, so the implementer guesses past it.
+- Fewer than three or more than seven briefs in one batch.

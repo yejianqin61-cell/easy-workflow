@@ -1,0 +1,3 @@
+interface:
+  display_name: Easy Implement
+  short_description: Implement a batch of task briefs, each ending in its own commit.

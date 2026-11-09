@@ -4,7 +4,7 @@ description: >-
   Use when a set of requirements needs an order to be built in: 施工计划, 开发计划, 实施方案, 拆阶段, 排期,
   implementation plan, build plan, "break this into phases", "how do we build this". Produces a plan in
   three parts: the requirements as a list, a rough approach for each one, and the phases with their
-  tasks. `easy-task-act` expands those tasks afterwards.
+  tasks. `easy-task` expands those tasks afterwards.
 ---
 
 # Easy plan
@@ -13,7 +13,7 @@ description: >-
 the plan is the order in which those proofs come cheap.
 
 A plan is not a spec: the decisions were made there, and this file does not reopen them. A plan is not a
-brief either: a task here is one line, and `easy-task-act` expands it later.
+brief either: a task here is one line, and `easy-task` expands it later.
 
 Read [references/readability-law.md](references/readability-law.md) before writing. Its twelve clauses
 hold here.
@@ -50,7 +50,7 @@ Five lines each, and no more:
 - **Approach**: the shape of the solution, in one or two sentences.
 - **Touches**: the module or the area, not the file.
 - **Test seam**: where this gets tested. Prefer a seam that exists, and prefer the highest one. The
-  ideal number of new seams is zero. The seam is decided here, and `easy-task-act` restates it in the
+  ideal number of new seams is zero. The seam is decided here, and `easy-task` restates it in the
   brief without adding one.
 - **Acceptance**: what will be true when this requirement is met, one item per line, each one checkable.
   A plan that follows an audit copies the audit's acceptance items here. One that starts from a spec
@@ -217,7 +217,7 @@ back. Clause 12 of the law carries this.
 
 - Phases named after layers. "Backend phase, frontend phase" proves nothing until the last day.
 - A goal that is a task. "Add the lock table" is work, not proof.
-- Tasks detailed enough to be briefs. That work belongs in `easy-task-act`.
+- Tasks detailed enough to be briefs. That work belongs in `easy-task`.
 - A phase with no proof, or a proof that is a feeling.
 - The spec, retold. Those decisions were settled there.
 - A requirement that appears in part 1 and nowhere else.

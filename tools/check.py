@@ -36,7 +36,7 @@ MAX_SENT_WORDS = 25
 BOLD_PER_LINE = 1.0
 BOLD_LINE_PCT = 40
 MAX_DESCRIPTION = 1024
-EXPECTED_SKILLS = 7
+EXPECTED_SKILLS = 8
 
 LINK = re.compile(r"\[[^\]]*\]\(([^)\s]+)\)")
 STRIKE = re.compile(r"~~[^~\n]+?~~")
