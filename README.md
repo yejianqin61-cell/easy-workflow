@@ -34,6 +34,22 @@ through symlinks, so a `git pull` keeps them current; add `--copy` where symlink
 To install by hand, clone the repo and symlink `skills/<bucket>/<name>` into your agent's skills
 directory.
 
+### MiniMax Code
+
+MiniMax Code reads its skills from its own data directory, and the `skills` CLI does not know that
+path. This repository ships an installer for it:
+
+```bash
+git clone https://github.com/xinlingli026-code/easy-workflow.git
+cd easy-workflow
+python tools/install-mcode.py            # copy every skill
+python tools/install-mcode.py --link     # symlink, so a git pull updates them
+python tools/install-mcode.py --list     # show the target and the skills
+```
+
+The installer writes one folder per skill into `~/.minimax/skills`. It changes nothing outside that
+folder, and it prints every path it touches. Point it elsewhere with `MINIMAX_CODE_DATA_DIR` or `--dir`.
+
 ## The skills
 
 | Skill | What it does |

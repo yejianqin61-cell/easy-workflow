@@ -30,6 +30,21 @@ npx skills use yejianqin61-cell/easy-workflow --skill easy-audit --agent claude-
 
 手动安装：clone 仓库，把 `skills/<bucket>/<name>` 软链到你的 agent skills 目录。
 
+### MiniMax Code
+
+MiniMax Code 从自己的数据目录读 skill，`skills` CLI 不知道这个路径。本仓自带一个安装器：
+
+```bash
+git clone https://github.com/xinlingli026-code/easy-workflow.git
+cd easy-workflow
+python tools/install-mcode.py            # 复制每个 skill
+python tools/install-mcode.py --link     # 软链，git pull 就等于更新
+python tools/install-mcode.py --list     # 打印目标目录与 skill 清单
+```
+
+安装器把每个 skill 写成一个文件夹，放在 `~/.minimax/skills`。它不碰这个目录以外的东西，并且会打印它碰过的每条路径。
+数据目录在别处时，用 `MINIMAX_CODE_DATA_DIR` 或 `--dir` 指过去。
+
 ## 有哪些 skill
 
 | skill | 做什么 |
