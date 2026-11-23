@@ -1,6 +1,6 @@
 # tools
 
-Dev-only. Nothing here is installed, and no skill ships it.
+Dev-only. No skill ships anything here, and nothing here joins an agent's skill set.
 
 ```bash
 python tools/check.py             # every gate
@@ -8,9 +8,26 @@ python tools/check.py prose       # one gate: law, links, prose, skills
 python tools/check.py --report    # the metric table, one row per file
 python tools/check.py law --sync  # re-copy the law into every skill
 python tools/selftest.py          # prove the gates can fail
+python tools/install-mcode.py     # install the skills into MiniMax Code
 ```
 
 `check.py` exits 1 when a gate fails, so it drops straight into CI.
+
+## install-mcode.py
+
+The one command that puts these skills into MiniMax Code. It finds every skill under `skills/`, then
+copies it into the data directory's `skills/` folder, one folder per skill.
+
+```bash
+python tools/install-mcode.py --list      # show the target and the skills
+python tools/install-mcode.py             # copy every skill
+python tools/install-mcode.py --link      # symlink, so a git pull updates them
+python tools/install-mcode.py --uninstall # remove the skills it installed
+```
+
+The target is `~/.minimax/skills`, unless `MINIMAX_CODE_DATA_DIR` or `--dir` says otherwise. The
+script replaces a folder of the same name and prints every path it touches. It needs no network and no
+third-party package, and it writes nothing outside the target folder.
 
 ## The gates
 
